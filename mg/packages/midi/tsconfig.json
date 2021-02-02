@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES5",
+    "module": "commonjs",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "outDir": "out",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "downlevelIteration": true
+  },
+  "include": ["src", "rollup.config.js"]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "@macrograph/scripts",
+  "version": "0.1.0",
+  "main": "src",
+  "dependencies": {
+    "@types/gulp": "^4.0.7",
+    "gulp": "^4.0.2",
+    "ts-morph": "^9.1.0"
+  },
+  "bin": {
+    "mg-pkg-compile": "src/index.js"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "test",
+  "displayName": "Test",
+  "version": "0.1.0",
+  "main": "out/index.js",
+  "scripts": {
+    "compile": "mg-pkg-compile"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^17.0.0",
+    "@rollup/plugin-node-resolve": "^11.0.1",
+    "@rollup/plugin-typescript": "^8.1.0",
+    "rollup": "^2.35.1",
+    "macrograph": "file:../../core",
+    "@macrograph/scripts": "0.1.0"
+  }
+}

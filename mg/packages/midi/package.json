@@ -1,0 +1,21 @@
+{
+  "name": "midi",
+  "displayName": "Midi",
+  "version": "0.1.0",
+  "main": "out/index.js",
+  "scripts": {
+    "compile": "mg-pkg-compile && rollup -c"
+  },
+  "devDependencies": {
+    "@macrograph/scripts": "0.1.0",
+    "@rollup/plugin-commonjs": "^17.0.0",
+    "@rollup/plugin-node-resolve": "^11.0.1",
+    "@rollup/plugin-typescript": "^8.1.0",
+    "macrograph": "file:../../core",
+    "rollup": "^2.35.1"
+  },
+  "dependencies": {
+    "eventemitter2": "^6.4.3",
+    "webmidi": "^2.5.1"
+  }
+}

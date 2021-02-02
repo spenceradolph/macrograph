@@ -1,0 +1,15 @@
+{
+  "name": "macrograph",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "mg/*",
+      "mg/packages/*"
+    ]
+  },
+  "scripts": {
+    "dev": "concurrently \"yarn dev:app\" \"yarn dev:electron\"",
+    "dev:app": "yarn workspace @macrograph/app run dev",
+    "dev:electron": "yarn workspace @macrograph/electron run dev"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES5",
+    "outDir": "dist",
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "downlevelIteration": true,
+    "declaration": true,
+    "strict": true,
+    "inlineSourceMap": true,
+    "inlineSources": true
+  },
+  "include": ["src", "tsconfig.test.json"]
+}
