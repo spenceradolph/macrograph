@@ -1,21 +1,25 @@
-import type { CoreEventsMap, RendererRequestsMap } from "@macrograph/core";
+import { EventEmitter2 as EventEmitter } from "eventemitter2";
+import type { ipcRenderer as ipcrt } from "electron";
 
-const { ipcRenderer } = window.require("electron");
+const { ipcRenderer: ipcr } = window.require("electron");
 
-export const invokeIpc = <T extends keyof RendererRequestsMap>({
-  type,
-  ...args
-}: RendererRequestsMap[T]["args"] & {
-  type: T;
-}): Promise<RendererRequestsMap[T]["returns"]> => {
-  return ipcRenderer.invoke(type, args);
-};
+export const ipcRenderer = ipcr as typeof ipcrt;
 
-export const handleCoreIpc = <T extends keyof CoreEventsMap>(
-  type: T,
-  callback: (args: CoreEventsMap[T]["args"]) => void
-) => {
-  ipcRenderer.on(`core:${type}`, (_: any, args: CoreEventsMap[T]["args"]) =>
-    callback(args)
-  );
-};
+class IpcBus extends EventEmitter {
+  constructor() {
+    super({ wildcard: true, delimiter: ":" });
+  }
+
+  invoke(type: string, data: any = {}) {
+    return ipcRenderer.invoke("IPC_RENDERER", { type, data });
+  }
+}
+
+export const ipcBus = new IpcBus();
+
+ipcRenderer.on(
+  "IPC_MAIN",
+  (_: unknown, { type, data }: { type: string; data: any }) => {
+    ipcBus.emit(type, data);
+  }
+);

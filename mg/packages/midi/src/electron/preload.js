@@ -1,5 +1,11 @@
-const { ipcRenderer } = require("electron");
+const { ipcRenderer, contextBridge } = require("electron");
 
-window.invokeIpc = (type, ...data) => {
-  ipcRenderer.invoke(type, ...data);
-};
+contextBridge.exposeInMainWorld("ipc", {
+  invoke: (type, data) => {
+    ipcRenderer.invoke(`midi`, { type, data });
+  },
+
+  handle: (topic, callback) => {
+    ipcRenderer.on(topic, callback);
+  },
+});

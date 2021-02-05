@@ -1,43 +1,56 @@
-import { autorun } from "mobx";
 import { EventEmitter2 as EventEmitter } from "eventemitter2";
+import { autorun, reaction } from "mobx";
 
 import { core, getEngineManager } from "..";
-import { PropertyArgs } from "../decorators/Property";
-
+import { PropertyData } from "../EngineManager";
+import { Select, Text } from "../properties";
 export abstract class BaseEngine extends EventEmitter {
   name: string;
 
   constructor() {
     super();
 
-    const data = getEngineManager().engines.get(this.constructor);
-    if (!data)
+    const meta = getEngineManager().engineMetas.get(this.constructor);
+    if (!meta)
       throw new Error(
-        `Data for engine ${this.constructor.name} not found. Did you forget to use @Engine?`
+        `Metadata for engine ${this.constructor.name} not found. Did you forget to use @Engine?`
       );
 
-    this.name = data.name;
+    this.name = meta.name;
 
-    data.properties.forEach(({ name, args }) => {
-      this.initialiseProperty(name, args);
+    getEngineManager().registerInstance(this.name, this);
+    meta.properties.forEach((propertyData) => {
+      this.initialiseProperty(propertyData);
     });
   }
 
-  initialiseProperty(name: string, args: PropertyArgs) {
-    if (!args.selectFrom)
-      core.EventService.on(
-        `core:setProperty:midi:${name}`,
-        ({ value }: any) => {
-          (this as any)[name] = value;
-        }
-      );
-    else {
-      autorun(() => {
-        core.EventService.emit(
-          `${this.name}:properties:${name}`,
-          (this as any)[name]
+  initialiseProperty(data: PropertyData) {
+    const self = this as any;
+    switch (data.type) {
+      case Select: {
+        const property = new Select();
+        self[data.name] = property;
+        reaction(
+          () => property.options.slice(),
+          (options) => {
+            core.ipcBus.send(
+              `engines:${this.name}:properties:${data.name}:setOptions`,
+              [...options]
+            );
+          }
         );
-      });
+        reaction(
+          () => property.value,
+          (value) => {
+            core.ipcBus.send(
+              `engines:${this.name}:properties:${data.name}:setValue`,
+              value
+            );
+          }
+        );
+      }
+      case Text: {
+      }
     }
   }
 

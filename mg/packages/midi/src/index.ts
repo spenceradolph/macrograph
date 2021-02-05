@@ -1,68 +1,95 @@
-import { EventNode, Node, types, Property } from "macrograph";
+import {
+  EventNode,
+  ExecNode,
+  Node,
+  types,
+  Property,
+  BaseEngine,
+  Select,
+  Engine as DeclareEngine,
+} from "macrograph";
 import { ipcMain, BrowserWindow } from "electron";
-import { EventEmitter2 as EventEmitter } from "eventemitter2";
 
 const win = new BrowserWindow({
   show: false,
+  webPreferences: {
+    contextIsolation: true,
+    preload: `${__dirname}/electron/preload.js`,
+  },
 });
 
+win.webContents.openDevTools();
+
 win.loadURL(`file://${__dirname}/electron/index.html`);
-console.log(__dirname);
 
-export const handleIpc = (type: string, callback: (args: any) => void) => {
-  ipcMain.handle(`midi:${type}`, (_, args) => callback(args));
-};
-
-class _Engine extends EventEmitter {
-  static ID = "midi";
-
-  topics = {};
-
-  @Property({ targetProperty: "input" })
-  inputs: string[] = [];
-
-  @Property({ targetProperty: "output" })
-  outputs: string[] = [];
+ipcMain.handle(`midi`, (_, { type, data }) => {
+  Engine.emit(type, data);
+});
+@DeclareEngine("midi")
+class _Engine extends BaseEngine {
+  topics: Record<string, boolean> = {};
 
   @Property()
-  input?: string = undefined;
+  inputs!: Select;
 
   @Property()
-  output?: string = undefined;
+  outputs!: Select;
 
-  constructor() {
-    super();
+  async start() {
+    this.on("connected", ({ name, type }) => {
+      const arr = type === "input" ? this.inputs.options : this.outputs.options;
 
-    this.handle("midi:connected", ({ name }) => this.inputs.push(name));
-
-    this.handle("midi:disconnected", ({ name }) => {
-      const index = this.inputs.findIndex(name);
-      if (index !== -1) this.inputs.splice(index);
+      if (!arr.includes(name)) arr.push(name);
     });
-  }
 
-  handle(type: string, callback: (...args: any) => void) {
-    if (this.topics[type] !== true) {
-      this.topics[type] = true;
-      handleIpc(type, (args) => this.emit(type, args));
-    }
+    this.on("disconnected", ({ name, type }) => {
+      const arr = type === "input" ? this.inputs.options : this.outputs.options;
 
-    this.addListener(type, callback);
+      const index = arr.findIndex((o) => o === name);
+      if (index !== -1) arr.splice(index);
+    });
+
+    this.on("send-basic", ({ note, velocity, channel }) => {
+      win.webContents.send("send-basic", {
+        note,
+        velocity,
+        channel,
+        device: this.inputs.value,
+      });
+    });
   }
 }
 
-const Engine = new _Engine();
+export const Engine = new _Engine();
 
 @Node({ displayName: "MIDI Device Connected" })
-class Connected extends EventNode {
+class MIDIDeviceConnected extends EventNode {
   build() {
     super.build();
     this.AddOutputDataPin("Name", types.string);
+    this.AddOutputDataPin("Is Input", types.boolean);
 
-    Engine.handle("connected", ({ name }) => this.Start(name));
+    Engine.on("connected", (data) => this.Start(data));
   }
 
-  Fire(name: string) {
+  Fire({ name, type }: any) {
     this.OutputDataPins[0].Data = name;
+    this.OutputDataPins[1].Data = type === "input";
+  }
+}
+
+@Node({ displayName: "Send Basic MIDI" })
+class MIDISendBasic extends ExecNode {
+  build() {
+    super.build();
+
+    this.AddInputDataPin("Note", types.int);
+    this.AddInputDataPin("Velocity", types.int);
+    this.AddInputDataPin("Channel", types.int);
+  }
+
+  Work() {
+    const [note, velocity, channel] = this.InputDataPins.map((p) => p.Data);
+    Engine.emit("send-basic", { note, velocity, channel });
   }
 }

@@ -1,6 +1,9 @@
 declare global {
   interface Window {
-    invokeIpc(type: string, ...args: any[]): void;
+    ipc: {
+      invoke(type: string, ...args: any[]): void;
+      handle(topic: string, callback: (args: any) => void): void;
+    };
   }
 }
 

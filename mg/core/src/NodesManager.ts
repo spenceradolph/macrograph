@@ -1,13 +1,10 @@
-import { readFileSync } from "fs";
-import { resolve } from "path";
-
 import { BaseNode } from "./nodes/Nodes";
-import EventService from "./services/EventService";
+import IpcBus from "./services/EventService";
 
 export default class NodesManager {
   private nodes: Map<string, Map<string, typeof BaseNode>>;
 
-  constructor(public EventService: EventService) {
+  constructor(public EventService: IpcBus) {
     this.nodes = new Map();
   }
 
@@ -22,10 +19,6 @@ export default class NodesManager {
     if (this.nodes.has(args.pkg))
       this.nodes.get(args.pkg)!.set(args.name, args.node);
     else this.nodes.set(args.pkg, new Map([[args.name, args.node]]));
-    this.EventService.emit("core:NodeRegistered", {
-      pkg: args.pkg,
-      name: args.name,
-    });
   }
 
   GetNode(args: { pkg: string; name: string }) {

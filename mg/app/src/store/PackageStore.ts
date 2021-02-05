@@ -2,8 +2,6 @@ import { action, observable } from "mobx";
 
 class Package {
   nodes = observable(new Set<string>());
-  
-  engine = ob
 
   constructor(public name: string) {}
 

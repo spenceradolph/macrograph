@@ -1,5 +1,6 @@
 import { SerializedNode, XYCoords } from "@macrograph/core";
 import { observable, flow } from "mobx";
+import { ipcBus } from "../utils";
 
 import {
   DataConnection,
@@ -11,11 +12,9 @@ import {
   OutputDataPin,
   OutputExecPin,
   pinIsData,
-  pinIsExec,
   pinIsInput,
   pinsAreIOPair,
 } from "./Nodes";
-import { invokeIpc } from "../utils";
 
 export class GraphStore {
   nodes = observable(new Map<number, Node>());
@@ -29,10 +28,10 @@ export class GraphStore {
       name: string;
     }
   ) {
-    const node: SerializedNode = yield invokeIpc({
-      type: "CreateNode",
-      ...args,
-    });
+    const node: SerializedNode = yield ipcBus.invoke(
+      "project:createNode",
+      args
+    );
 
     const instance = new Node(node, this);
 
@@ -41,7 +40,7 @@ export class GraphStore {
 
   deleteNode = flow(function* (this: GraphStore, args: { node: number }) {
     try {
-      yield invokeIpc({ type: "DeleteNode", node: args.node });
+      yield ipcBus.invoke("project:delteteNode", args.node);
 
       const nodeInstance = this.nodes.get(args.node);
 
@@ -64,8 +63,7 @@ export class GraphStore {
     const inputPin = pairInfo.reverse ? args.from : args.to;
 
     try {
-      yield invokeIpc({
-        type: pairInfo.data ? "ConnectDataPins" : "ConnectExecPins",
+      yield ipcBus.invoke("project:connectPins", {
         from: { pin: outputPin.id, node: outputPin.node.id },
         to: { pin: inputPin.id, node: inputPin.node.id },
       });
@@ -121,12 +119,9 @@ export class GraphStore {
 
   disconnectPin = flow(function* (this: GraphStore, pin: NodePin) {
     try {
-      yield invokeIpc({
-        type: "DisconnectPin",
+      yield ipcBus.invoke("project:disconnectPin", {
         node: pin.node.id,
         pin: pin.id,
-        exec: pinIsExec(pin),
-        input: pinIsInput(pin),
       });
 
       if (pinIsData(pin)) {

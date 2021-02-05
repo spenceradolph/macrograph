@@ -8,8 +8,8 @@ import FunctionSocket from "./FunctionSocket";
 import Socket from "./Socket";
 import SocketInput from "./SocketInput";
 import { Node as NodeModel } from "../../store/Nodes";
-import { invokeIpc } from "../../utils";
 import { Store } from "../../store";
+import { ipcBus } from "../../utils";
 
 interface Props {
   node: NodeModel;
@@ -88,8 +88,7 @@ const Node = observer(({ node, selected, onMouseDown }: Props) => {
           const upListener = () => {
             window.removeEventListener("mousemove", mouseCallback);
             mouseDownPos.current = null;
-            invokeIpc({
-              type: "SetNodePosition",
+            ipcBus.invoke("project:setNodePosition", {
               id: node.id,
               position: toJS(node.position),
             });

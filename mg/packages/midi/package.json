@@ -11,7 +11,7 @@
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-node-resolve": "^11.0.1",
     "@rollup/plugin-typescript": "^8.1.0",
-    "macrograph": "file:../../core",
+    "macrograph": "file:../../types",
     "rollup": "^2.35.1"
   },
   "dependencies": {

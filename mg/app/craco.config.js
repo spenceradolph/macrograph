@@ -1,5 +1,1 @@
-module.exports = {
-  // babel: {
-  //     plugins: ["./babel/plugin.js"]
-  // }
-};
+module.exports = {};

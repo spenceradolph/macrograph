@@ -1,41 +1,83 @@
-import { PropertyArgs } from "./decorators/Property";
-import EventService from "./services/EventService";
+import { BaseEngine } from "./classes";
+import { SerializedEngine } from "./ipc";
+import { PropertyType } from "./properties";
+import IpcBus from "./services/EventService";
 
-class EngineData {
-  name!: string;
-  properties: { name: string; args: PropertyArgs }[] = [];
+export interface PropertyData {
+  name: string;
+  type: PropertyType;
+}
 
-  constructor(public target: Function) {}
+interface EngineData {
+  name: string;
+  properties: PropertyData[];
 }
 
 export class EngineManager {
   properties = [];
 
-  constructor(public eventService: EventService) {}
+  constructor(public eventService: IpcBus) {}
 
-  engines = new Map<Function, EngineData>();
+  engineMetas = new Map<Function, EngineData>();
+  engineInstances = new Map<string, BaseEngine>();
 
   registerEngine(engineConstructor: Function, name: string) {
-    let engineData = this.engines.get(engineConstructor);
+    let engineData = this.engineMetas.get(engineConstructor);
     if (!engineData) {
-      engineData = new EngineData(engineConstructor);
-      this.engines.set(engineConstructor, engineData);
+      engineData = {
+        name,
+        properties: [],
+      };
+      this.engineMetas.set(engineConstructor, engineData);
     }
 
     engineData.name = name;
   }
 
+  registerInstance(name: string, instance: BaseEngine) {
+    this.engineInstances.set(name, instance);
+  }
+
   registerProperty(
     engineConstructor: Function,
-    propertyName: string,
-    args: PropertyArgs
+    name: string,
+    type: PropertyType
   ) {
-    let engineData = this.engines.get(engineConstructor);
+    let engineData = this.engineMetas.get(engineConstructor);
     if (!engineData) {
-      engineData = new EngineData(engineConstructor);
-      this.engines.set(engineConstructor, engineData);
+      engineData = {
+        name,
+        properties: [],
+      };
+      this.engineMetas.set(engineConstructor, engineData);
     }
 
-    engineData.properties.push({ name: propertyName, args });
+    engineData.properties.push({ name, type });
+  }
+
+  serializeEngine(name: string): SerializedEngine {
+    const engine = this.engineInstances.get(name);
+    if (!engine) throw new Error(`Engine ${name} not initialized!`);
+    const meta = this.engineMetas.get(engine.constructor);
+    if (!meta) throw new Error(`Metadata for engine ${name} not found!`);
+
+    return {
+      pkg: engine.name,
+      properties: meta.properties.map((p) => ({
+        type: p.type.name as any,
+        name: p.name,
+        data: (engine as any)[p.name].data(),
+      })),
+    } as any;
+  }
+
+  serializeAll() {
+    return [...this.engineInstances.keys()].map((k) => this.serializeEngine(k));
+  }
+
+  startAll() {
+    return Promise.all(
+      [...this.engineInstances.values()].map((i) => i.start())
+    );
   }
 }

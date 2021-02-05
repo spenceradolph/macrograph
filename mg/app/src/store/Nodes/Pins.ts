@@ -1,7 +1,7 @@
 import type { PinType, XYCoords } from "@macrograph/core";
-import { invokeIpc } from "../../utils";
 import { DataConnection, ExecConnection, Node } from ".";
-import { action, computed, observable, flow } from "mobx";
+import { action, computed, flow, observable } from "mobx";
+import { ipcBus } from "../../utils";
 
 export class BasePin {
   id: string;
@@ -45,14 +45,11 @@ export class InputDataPin extends BasePin {
   get connected() {
     return this.connection !== undefined;
   }
-
   setUnconnectedData = flow(function* (
     this: InputDataPin,
     data: string | number | boolean
   ) {
-    yield invokeIpc({
-      type: "SetUnconnectedData",
-      node: this.node.id,
+    yield ipcBus.invoke("project:setUnconnectedData", {
       pin: this.id,
       data,
     });

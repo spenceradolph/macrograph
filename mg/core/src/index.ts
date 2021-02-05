@@ -2,11 +2,13 @@ import "reflect-metadata";
 import _NodesManager, { setCurrentManager } from "./NodesManager";
 import { EngineManager } from "./EngineManager";
 import { Project } from "./Project";
-import _EventService from "./services/EventService";
+import IpcBus from "./services/EventService";
 import { BrowserWindow } from "electron";
 export * from "./nodes";
-export * from "./ipcTypes";
+export * from "./ipc";
 export * from "./decorators";
+export * from "./properties";
+export * from "./classes";
 
 import "./customRequire";
 
@@ -14,14 +16,14 @@ export const createBrowserWindow = (args: any) => new BrowserWindow(args);
 
 export class Core {
   // Services
-  EventService = new _EventService();
-  NodesManager = new _NodesManager(this.EventService);
-  EngineManager = new EngineManager(this.EventService);
+  ipcBus = new IpcBus();
+  NodesManager = new _NodesManager(this.ipcBus);
+  EngineManager = new EngineManager(this.ipcBus);
 
   Project: Project;
 
   constructor() {
-    this.Project = new Project(this.NodesManager, this.EventService);
+    this.Project = new Project(this.NodesManager, this.ipcBus);
     setCurrentManager(this.NodesManager);
   }
 }

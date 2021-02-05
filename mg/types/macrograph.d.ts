@@ -1,6 +1,7 @@
 /// <reference types="electron"/>
 
 import { EventEmitter2 as EventEmitter } from "eventemitter2";
+import { IObservableArray } from "mobx";
 
 // export namespace macrograph {
 //   const _PinTypes =
@@ -36,7 +37,7 @@ type PinType = IntType | FloatType | BooleanType | StringType | EnumType;
 
 declare abstract class NodePin {
   constructor(Node: BaseNode, Name: string);
-  
+
   Node: BaseNode;
   Name: string;
   ID: string;
@@ -47,7 +48,7 @@ declare abstract class NodePin {
 
 declare abstract class NodeDataPin extends NodePin {
   constructor(Node: BaseNode, Name: string, PinType: PinType);
-  
+
   PinType: PinType;
   Data: any;
 
@@ -126,5 +127,26 @@ declare module "macrograph" {
 
   export const Node: (args: { displayName: string }) => ClassDecorator;
   export const Engine: (name: string) => ClassDecorator;
-  export const Property: (args: PropertyArgs) => PropertyDecorator;
+  export const Property: (args?: PropertyArgs) => PropertyDecorator;
+
+  export const types: {
+    int: IntType;
+    float: FloatType;
+    string: StringType;
+    boolean: BooleanType;
+    enum: (enumType: string) => EnumType;
+    array: <T extends PinType>(type: T) => T;
+    // any: { type: "Any", isArray: false } as AnyType,
+    // primitive: { type: "Primitive", isArray: false } as PrimitiveType,
+    // union: <T extends PinType[]>(...types: T): UnionType<T> => ({
+    //   type: "Union",
+    //   types,
+    //   isArray: false,
+    // }),
+  };
+
+  export class Select {
+    value: string;
+    options: string[];
+  }
 }

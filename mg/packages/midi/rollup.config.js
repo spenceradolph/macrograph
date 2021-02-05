@@ -8,5 +8,4 @@ module.exports = {
     require("@rollup/plugin-node-resolve").nodeResolve(),
     require("@rollup/plugin-commonjs")(),
   ],
-  external: ["electron"],
 };

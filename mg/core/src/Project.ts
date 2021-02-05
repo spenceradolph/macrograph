@@ -1,4 +1,4 @@
-import { NodeType, SerializedNode } from "./ipcTypes";
+import { NodeType, SerializedNode } from "./ipc";
 import { typesCompatible } from "./nodes";
 import { BaseNode, EventNode, ExecNode, ValueNode } from "./nodes/Nodes";
 import {
@@ -8,7 +8,7 @@ import {
   NodeOutputExecPin,
 } from "./nodes/Pins";
 import NodesManager from "./NodesManager";
-import EventService from "./services/EventService";
+import IpcBus from "./services/EventService";
 import { CheckDataRecursion, CheckExecRecursion } from "./utils";
 
 export class Project {
@@ -16,7 +16,7 @@ export class Project {
 
   constructor(
     public NodesManager: NodesManager,
-    public EventService: EventService
+    public EventService: IpcBus
   ) {}
 
   private _NewID = 0;
@@ -133,6 +133,8 @@ export class Project {
     from.OutgoingPin = to;
     to.IncomingPin = from;
   }
+  
+  
 
   // AddNode(node: BaseNode) {
   //   this.ConnectPins();
