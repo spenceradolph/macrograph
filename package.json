@@ -8,8 +8,9 @@
     ]
   },
   "scripts": {
-    "dev": "concurrently \"yarn dev:app\" \"yarn dev:electron\"",
-    "dev:app": "yarn workspace @macrograph/app run dev",
-    "dev:electron": "yarn workspace @macrograph/electron run dev"
+    "dev": "concurrently \"yarn app dev\" \"yarn electron dev\" \"yarn core dev\"",
+    "core": "yarn workspace @macrograph/core run",
+    "app": "yarn workspace @macrograph/app run",
+    "delectron": "yarn workspace @macrograph/electron run"
   }
 }
