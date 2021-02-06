@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import { EventEmitter2 } from "eventemitter2";
 import _NodesManager, { setCurrentManager } from "./NodesManager";
 import { EngineManager } from "./EngineManager";
 import { Project } from "./Project";
@@ -9,6 +10,8 @@ export * from "./ipc";
 export * from "./decorators";
 export * from "./properties";
 export * from "./classes";
+
+EventEmitter2.defaultMaxListeners = 9999;
 
 import "./customRequire";
 
