@@ -1,4 +1,3 @@
-import OBSWebsocket from "obs-websocket-js";
 import { EventNode, ExecNode, Node, types } from "macrograph";
 
 import { engine } from "./engine";

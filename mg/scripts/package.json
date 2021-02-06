@@ -5,6 +5,7 @@
   "dependencies": {
     "@types/gulp": "^4.0.7",
     "gulp": "^4.0.2",
+    "gulp-typescript": "^6.0.0-alpha.1",
     "ts-morph": "^9.1.0"
   },
   "bin": {

@@ -76,6 +76,7 @@ export class EngineManager {
   }
 
   startAll() {
+    console.log(this.engineInstances)
     return Promise.all(
       [...this.engineInstances.values()].map((i) => i.start())
     );

@@ -125,7 +125,7 @@ declare module "macrograph" {
     abstract start(): Promise<void>;
   }
 
-  export const Node: (args: { displayName: string }) => ClassDecorator;
+  export const Node: (args: { displayName: string, pkg?: string }) => ClassDecorator;
   export const Engine: (name: string) => ClassDecorator;
   export const Property: (args?: PropertyArgs) => PropertyDecorator;
 

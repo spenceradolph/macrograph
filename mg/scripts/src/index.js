@@ -4,27 +4,30 @@ const { Project } = require("ts-morph");
 const path = require("path");
 const fs = require("fs");
 const gulp = require("gulp");
+const ts = require("gulp-typescript");
 
-insertPackageNameInNodes();
+var Transform = require("stream").Transform;
 
-async function insertPackageNameInNodes() {
-  const appDirectory = fs.realpathSync(process.cwd());
-  const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath);
+const appDirectory = fs.realpathSync(process.cwd());
+const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath);
+const pkgJson = require(resolveApp("package.json"));
+const packageName = pkgJson.displayName;
 
-  const pkgJson = require(resolveApp("package.json"));
-  const packageName = pkgJson.displayName;
-
-  if (packageName === undefined)
-    throw new Error("Package name not specified in package.json");
-
-  const project = new Project({
-    tsConfigFilePath: resolveApp("tsconfig.json"),
-  });
-
-  const files = project.addSourceFilesFromTsConfig(resolveApp("tsconfig.json"));
-
-  files.forEach((file) => {
-    const text = file.getFullText();
+const transform = () => {
+  // Monkey patch Transform or create your own subclass,
+  // implementing `_transform()` and optionally `_flush()`
+  var transformStream = new Transform({ objectMode: true });
+  /**
+   * @param {Buffer|string|any} file
+   * @param {string=} encoding - ignored if file contains a Buffer
+   * @param {function(Error, object): void=} callback - Call this function (optionally with an
+   *          error argument and data) when you are done processing the supplied chunk.
+   */
+  transformStream._transform = async function (file, encoding, callback) {
+    const project = new Project();
+    const text = typeof file === "string" ? file : file.contents.toString();
+    const astFile = project.createSourceFile("test.ts", text);
+    
 
     const regex = /@Node/gm;
     let m;
@@ -40,7 +43,7 @@ async function insertPackageNameInNodes() {
 
       /** @type{[import("ts-morph").CallExpression]} */
       // @ts-ignore
-      const [callExpression] = file
+      const [callExpression] = astFile
         .getDescendantAtPos(m.index)
         .getNextSiblings();
 
@@ -54,9 +57,16 @@ async function insertPackageNameInNodes() {
         initializer: `"${packageName}"`,
       });
     });
-  });
 
-  await project.emit();
-}
+    file.contents = Buffer.from(project.getSourceFile("test.ts").getFullText());
 
-gulp.src("src/**/!(*.{js,ts})").pipe(gulp.dest("out"));
+    callback(null, file);
+  };
+
+  return transformStream;
+};
+
+const tsProject = ts.createProject("tsconfig.json");
+
+gulp.src(["src/**/*", "!src/**/*.ts"]).pipe(gulp.dest("out"));
+gulp.src("src/**/*.ts").pipe(transform()).pipe(tsProject()).pipe(gulp.dest("out"));

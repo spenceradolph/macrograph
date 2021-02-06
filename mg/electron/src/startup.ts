@@ -28,7 +28,6 @@ export const startup = (win: BrowserWindow) => {
       win.webContents.send("IPC_MAIN", { type, data });
     },
     "app:uiReady": async () => {
-      console.log(__dirname)
       require(path.join(__dirname, "../../packages/obs"));
       require(path.join(__dirname, "../../packages/test"));
       require(path.join(__dirname, "../../packages/util"));

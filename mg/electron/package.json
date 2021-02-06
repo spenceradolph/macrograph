@@ -4,7 +4,7 @@
   "private": true,
   "main": "dist/index.js",
   "scripts": {
-    "dev": "concurrently \"tsc -w\" \"wait-on http://localhost:3000 && electron .\""
+    "dev": "tsc && wait-on http://localhost:3000 && electron ."
   },
   "dependencies": {
     "electron-devtools-installer": "^3.1.1",
