@@ -11,7 +11,7 @@
     "@rollup/plugin-node-resolve": "^11.0.1",
     "@rollup/plugin-typescript": "^8.1.0",
     "rollup": "^2.35.1",
-    "macrograph": "file:../../core",
+    "macrograph": "0.1.0",
     "@macrograph/scripts": "0.1.0"
   }
 }

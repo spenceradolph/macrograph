@@ -1,15 +1,24 @@
-import { Engine, BaseEngine, Property } from "macrograph";
+import { Engine, BaseEngine, Property, Text } from "macrograph";
 import OBSWebsocket from "obs-websocket-js";
 
 @Engine("obs")
 class OBSEngine extends BaseEngine {
   ws = new OBSWebsocket();
 
-  @Property({})
-  address = "localhost:4444";
-  
+  connected = false;
+
+  @Property()
+  address!: Text;
+
   async start() {
-    this.ws.connect({ address: this.address });
+    this.address.value = "localhost:4444";
+
+    try {
+      await this.ws.connect({ address: this.address.value });
+      this.connected = true;
+    } catch {
+      this.connected = false;
+    }
   }
 }
 

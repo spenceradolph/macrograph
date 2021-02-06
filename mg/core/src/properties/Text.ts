@@ -1,4 +1,4 @@
-import { observable, toJS } from "mobx";
+import { observable } from "mobx";
 import { EngineProperty } from ".";
 
 export class Text extends EngineProperty {

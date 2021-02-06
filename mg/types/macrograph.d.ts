@@ -149,4 +149,8 @@ declare module "macrograph" {
     value: string;
     options: string[];
   }
+
+  export class Text {
+    value: string;
+  }
 }

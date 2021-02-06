@@ -1,4 +1,5 @@
 import { BrowserWindow, ipcMain } from "electron";
+import * as path from "path"
 
 import {
   core,
@@ -27,11 +28,11 @@ export const startup = (win: BrowserWindow) => {
       win.webContents.send("IPC_MAIN", { type, data });
     },
     "app:uiReady": async () => {
-      // require("/Users/brendanallan/Documents/Programming/macrograph/mg/packages/obs");
-      require("/Users/brendanallan/Documents/Programming/macrograph/mg/packages/math");
-      require("/Users/brendanallan/Documents/Programming/macrograph/mg/packages/test");
-      require("/Users/brendanallan/Documents/Programming/macrograph/mg/packages/util");
-      require("/Users/brendanallan/Documents/Programming/macrograph/mg/packages/midi");
+      console.log(__dirname)
+      require(path.join(__dirname, "../../packages/obs"));
+      require(path.join(__dirname, "../../packages/test"));
+      require(path.join(__dirname, "../../packages/util"));
+      require(path.join(__dirname, "../../packages/midi"));
 
       await core.EngineManager.startAll();
 

@@ -11,6 +11,7 @@
     "dev": "concurrently \"yarn app dev\" \"yarn electron dev\" \"yarn core dev\"",
     "core": "yarn workspace @macrograph/core run",
     "app": "yarn workspace @macrograph/app run",
-    "delectron": "yarn workspace @macrograph/electron run"
+    "electron": "yarn workspace @macrograph/electron run",
+    "packages:compile": "concurrently \"yarn workspace math run compile\" \"yarn workspace midi run compile\" \"yarn workspace obs run compile\" \"yarn workspace test run compile\" \"yarn workspace util run compile\""
   }
 }

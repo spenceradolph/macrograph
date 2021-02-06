@@ -48,8 +48,21 @@ export abstract class BaseEngine extends EventEmitter {
             );
           }
         );
+        break;
       }
       case Text: {
+        const property = new Text();
+        self[data.name] = property;
+
+        reaction(
+          () => property.value,
+          (value) =>
+            core.ipcBus.send(
+              `engines:${this.name}:properties:${data.name}:setValue`,
+              value
+            )
+        );
+        break;
       }
     }
   }

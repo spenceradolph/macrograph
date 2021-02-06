@@ -11,5 +11,5 @@
     "inlineSourceMap": true,
     "inlineSources": true
   },
-  "include": ["src", "tsconfig.test.json"]
+  "include": ["src"]
 }

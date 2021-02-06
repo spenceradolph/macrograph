@@ -1,4 +1,3 @@
-import { core } from ".";
 import { PinType } from "./nodes";
 
 export declare type NodeType = "Base" | "Exec" | "Pure" | "Event";

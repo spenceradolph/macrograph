@@ -25,10 +25,9 @@ win.loadURL(`file://${__dirname}/electron/index.html`);
 ipcMain.handle(`midi`, (_, { type, data }) => {
   Engine.emit(type, data);
 });
+
 @DeclareEngine("midi")
 class _Engine extends BaseEngine {
-  topics: Record<string, boolean> = {};
-
   @Property()
   inputs!: Select;
 

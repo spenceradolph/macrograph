@@ -32,7 +32,7 @@ export class SelectProperty extends BaseProperty {
           `engines:${this.engine}:properties:${this.name}:setValue`,
           value
         );
-      },
+      }
     );
   }
 }

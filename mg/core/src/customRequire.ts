@@ -13,7 +13,7 @@ import { Node } from "./decorators";
 import { types } from "./nodes/PinTypes";
 import { BaseNode, EventNode, ExecNode, ValueNode } from "./nodes/Nodes";
 import { BaseEngine } from "./classes";
-import { Select } from "./properties";
+import { Select, Text } from "./properties";
 
 (() => {
   const Mod = require("module");
@@ -38,6 +38,7 @@ import { Select } from "./properties";
         NodePin,
         BaseEngine,
         Select,
+        Text,
       } as typeof macrograph;
 
     return _require.apply(this, arguments);

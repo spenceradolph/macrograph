@@ -1,5 +1,4 @@
-import { ExecNode, Node, types } from "macrograph";
-import type { PinType } from "@macrograph/core";
+import { ExecNode, Node, types, PinType } from "macrograph";
 
 function createNodeVariants<T extends Record<string, PinType>>(
   classDeclaration: <K extends keyof T>(name: K, type: T[K]) => void,
