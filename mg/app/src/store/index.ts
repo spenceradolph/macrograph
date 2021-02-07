@@ -1,4 +1,5 @@
 import { EngineStore } from "./EngineStore";
+import { EnumStore } from "./EnumStore";
 import { GraphStore } from "./GraphStore";
 import { PackageStore } from "./PackageStore";
 import { UIStore } from "./UIStore";
@@ -8,6 +9,7 @@ export class RootStore {
   ui = new UIStore();
   packages = new PackageStore();
   engines = new EngineStore();
+  enums = new EnumStore();
 }
 
 export class BaseStore {

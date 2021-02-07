@@ -1,5 +1,5 @@
-import { BaseNode } from "./nodes/Nodes";
-import IpcBus from "./services/EventService";
+import { BaseNode } from "../nodes/Nodes";
+import IpcBus from "../services/EventService";
 
 export default class NodesManager {
   private nodes: Map<string, Map<string, typeof BaseNode>>;

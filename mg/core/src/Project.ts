@@ -7,7 +7,7 @@ import {
   NodeOutputDataPin,
   NodeOutputExecPin,
 } from "./nodes/Pins";
-import NodesManager from "./NodesManager";
+import NodesManager from "./managers/NodesManager";
 import IpcBus from "./services/EventService";
 import { CheckDataRecursion, CheckExecRecursion } from "./utils";
 

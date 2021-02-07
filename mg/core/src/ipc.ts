@@ -81,3 +81,8 @@ export declare interface SerializedEngine {
   pkg: string;
   properties: SerializedEngineProperty<keyof EngineProperties>[];
 }
+
+export declare interface SerializedEnum {
+  name: string;
+  values: string[];
+}

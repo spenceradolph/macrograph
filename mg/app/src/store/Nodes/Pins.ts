@@ -51,6 +51,7 @@ export class InputDataPin extends BasePin {
   ) {
     yield ipcBus.invoke("project:setUnconnectedData", {
       pin: this.id,
+      node: this.node.id,
       data,
     });
 

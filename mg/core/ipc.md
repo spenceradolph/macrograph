@@ -14,6 +14,12 @@ MacroGraph IPC API
 | ----------- | ---- | ------------------ |
 | Core        | all  | SerializedEngine[] |
 
+### **enums:**
+
+| Destination | Name | Args   |
+| ----------- | ---- | ------ |
+| Core        | all  | SerializedEnum[] |
+
 ### **packages:**
 
 | Destination | Name       | Args              | Returns             |

@@ -20,7 +20,7 @@ export interface FloatType extends BaseType<"Float"> {}
 export interface BooleanType extends BaseType<"Boolean"> {}
 export interface StringType extends BaseType<"String"> {}
 export interface EnumType extends BaseType<"Enum"> {
-  enumType: string;
+  enum: string;
 }
 // export interface PrimitiveType extends BaseType<"Primitive"> {}
 // export interface AnyType extends BaseType<"Any"> {}
@@ -37,9 +37,9 @@ export const types = {
   int: { type: "Int", isArray: false } as IntType,
   float: { type: "Float", isArray: false } as FloatType,
   string: { type: "String", isArray: false } as StringType,
-  enum: (enumType: string): EnumType => ({
+  enum: (enumType: object): EnumType => ({
     type: "Enum",
-    enumType,
+    enum: Reflect.getMetadata("design:enumName", enumType),
     isArray: false,
   }),
   boolean: { type: "Boolean", isArray: false } as BooleanType,
@@ -72,7 +72,7 @@ export const typesCompatible = (type1: PinType, type2: PinType): boolean => {
     // case "Any":
     // return true;
     case "Enum":
-      return type2.type === "Enum" && type1.enumType === type2.enumType;
+      return type2.type === "Enum" && type1.enum === type2.enum;
     // case "Primitive":
     //   return ["Int", "Float", "Boolean", "String", "Primitive"].includes(
     //     type2.type

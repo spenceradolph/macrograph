@@ -6,6 +6,6 @@ contextBridge.exposeInMainWorld("ipc", {
   },
 
   handle: (topic, callback) => {
-    ipcRenderer.on(topic, callback);
+    ipcRenderer.on(topic, (_, args) => callback(args));
   },
 });

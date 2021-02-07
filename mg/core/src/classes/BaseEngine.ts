@@ -1,11 +1,13 @@
 import { EventEmitter2 as EventEmitter } from "eventemitter2";
-import { autorun, reaction } from "mobx";
+import { reaction } from "mobx";
 
 import { core, getEngineManager } from "..";
-import { PropertyData } from "../EngineManager";
+import { PropertyData } from "../managers/EngineManager";
 import { Select, Text } from "../properties";
 export abstract class BaseEngine extends EventEmitter {
   name: string;
+
+  abstract enums?: Record<string, object>;
 
   constructor() {
     super();

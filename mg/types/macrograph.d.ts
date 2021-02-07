@@ -25,7 +25,7 @@ interface FloatType extends BaseType<"Float"> {}
 interface BooleanType extends BaseType<"Boolean"> {}
 interface StringType extends BaseType<"String"> {}
 interface EnumType extends BaseType<"Enum"> {
-  enumType: string;
+  enum: string;
 }
 // export interface PrimitiveType extends BaseType<"Primitive"> {}
 // export interface AnyType extends BaseType<"Any"> {}
@@ -112,7 +112,7 @@ declare module "macrograph" {
     abstract Fire(EventData: any): void;
     Work(): void;
 
-    Start(EventData: any): void;
+    Start(EventData: any): Promise<void>;
 
     build(): void;
 
@@ -123,10 +123,22 @@ declare module "macrograph" {
 
   export abstract class BaseEngine extends EventEmitter {
     abstract start(): Promise<void>;
+
+    enums?: Record<string, object>;
   }
 
-  export const Node: (args: { displayName: string, pkg?: string }) => ClassDecorator;
-  export const Engine: (name: string) => ClassDecorator;
+  export const Node: (args: {
+    displayName: string;
+    pkg?: string;
+  }) => ClassDecorator;
+
+  interface EngineDecoratorProps {
+    enums?: Record<string, object>;
+  }
+  export const Engine: (
+    name: string,
+    props?: EngineDecoratorProps
+  ) => ClassDecorator;
   export const Property: (args?: PropertyArgs) => PropertyDecorator;
 
   export const types: {
@@ -134,7 +146,7 @@ declare module "macrograph" {
     float: FloatType;
     string: StringType;
     boolean: BooleanType;
-    enum: (enumType: string) => EnumType;
+    enum: (type: object) => EnumType;
     array: <T extends PinType>(type: T) => T;
     // any: { type: "Any", isArray: false } as AnyType,
     // primitive: { type: "Primitive", isArray: false } as PrimitiveType,
@@ -148,9 +160,11 @@ declare module "macrograph" {
   export class Select {
     value: string;
     options: string[];
+    onChange(callback: Function): void;
   }
 
   export class Text {
     value: string;
+    onChange(callback: Function): void;
   }
 }

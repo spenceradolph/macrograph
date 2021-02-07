@@ -44,17 +44,21 @@ export abstract class BaseNode {
     this.displayName = Type;
   }
 
-  abstract Work(): void;
-  Process() {
-    this.InputDataPins.forEach((p) => {
-      if (p.IncomingPin) {
-        if (p.IncomingPin.Node instanceof ValueNode)
-          p.IncomingPin.Node.Process();
+  abstract Work(): Promise<void>;
+  async Process() {
+    await Promise.all(
+      this.InputDataPins.map(async (p) => {
+        if (p.IncomingPin) {
+          if (p.IncomingPin.Node instanceof ValueNode)
+            await p.IncomingPin.Node.Process();
 
-        p.Data = p.IncomingPin.Data;
-      } else p.Data = p.UnconnectedData;
-    });
-    this.Work();
+          p.Data = p.IncomingPin.Data;
+        } else p.Data = p.UnconnectedData;
+      })
+    );
+    try {
+      await this.Work();
+    } catch {}
   }
 
   abstract build(): void;
@@ -66,9 +70,9 @@ export abstract class ExecNode extends BaseNode {
     this.AddOutputExecPin("");
   }
 
-  Process() {
-    super.Process();
-    this.OutputExecPins[0].OutgoingPin?.Node.Process();
+  async Process() {
+    await super.Process();
+    await this.OutputExecPins[0].OutgoingPin?.Node.Process();
   }
 }
 
@@ -82,18 +86,18 @@ export abstract class EventNode extends BaseNode {
    */
   abstract Fire(EventData: any): void;
 
-  Work() {}
+  async Work() {}
 
   /**
    * @description Begin processing node chain
    */
   Start(EventData?: any) {
     this.Fire(EventData);
-    this.Process();
+    return this.Process();
   }
 
-  Process() {
-    this.ExecOutput1.OutgoingPin?.Node.Process();
+  async Process() {
+    await this.ExecOutput1.OutgoingPin?.Node.Process();
   }
 
   AddInputDataPin() {

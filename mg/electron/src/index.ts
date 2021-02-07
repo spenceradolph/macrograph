@@ -1,9 +1,7 @@
 import { app, BrowserWindow } from "electron";
-import * as path from "path";
 import * as isDev from "electron-is-dev";
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
-  REDUX_DEVTOOLS,
 } from "electron-devtools-installer";
 
 let win: BrowserWindow | null = null;

@@ -1,4 +1,4 @@
-import { getCurrentManager } from "../NodesManager";
+import { getCurrentManager } from "../managers/NodesManager";
 
 export const Node = (args: {
   displayName: string;

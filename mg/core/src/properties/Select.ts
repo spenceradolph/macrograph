@@ -1,4 +1,4 @@
-import { IObservableArray, observable, toJS } from "mobx";
+import { IObservableArray, observable, reaction, toJS } from "mobx";
 import { EngineProperty } from ".";
 
 export interface Select extends IObservableArray {
@@ -42,5 +42,10 @@ export class Select extends EngineProperty {
 
       return c;
     });
+
+    reaction(
+      () => this.value,
+      (value) => this.listeners.forEach((l) => l(value))
+    );
   }
 }

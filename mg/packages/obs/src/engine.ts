@@ -11,7 +11,6 @@ class OBSEngine extends BaseEngine {
   address!: Text;
 
   async start() {
-    console.log("BRUH");
     this.address.value = "localhost:4444";
 
     try {
@@ -23,8 +22,10 @@ class OBSEngine extends BaseEngine {
     }
 
     this.ws.on("SwitchScenes", (e) => this.emit("SwitchScenes", e));
+  }
 
-    this.on("SetCurrentScene", (args) => this.ws.send("SetCurrentScene", args));
+  SetCurrentScene(args: { "scene-name": string }) {
+    return this.ws.send("SetCurrentScene", args);
   }
 }
 

@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { observer } from "mobx-react-lite";
 import { forwardRef, useState } from "react";
+import { Store } from "../../store";
 
 import { InputDataPin } from "../../store/Nodes";
 
@@ -46,21 +47,55 @@ const SocketInput = observer(({ pin }: Props) => {
       );
     case "String":
       return (
-        <input
-          className={clsx(
-            "w-16 px-1 bg-black rounded-md border border-gray-400",
-            pin.connected && "opacity-0 pointer-events-none"
-          )}
-          onKeyDown={(e) => e.stopPropagation()}
-          onChange={(e) => pin.setUnconnectedData(e.target.value)}
-          value={(pin.unconnectedData as string) || ""}
+        <StringInput
+          onChange={(v) => pin.setUnconnectedData(v)}
+          className={
+            pin.connected ? "opacity-0 pointer-events-none" : undefined
+          }
+          initialValue={pin.unconnectedData as string}
         />
       );
+    case "Enum":
+      const enumVals = Store.enums.enums.get(pin.type.enum);
+      if (!enumVals) return null;
+
+      return (
+        <select
+          className="w-32 bg-black rounded-md py-0 px-1 pr-8"
+          value={pin.unconnectedData as number}
+          onChange={(e) => pin.setUnconnectedData(parseInt(e.target.value))}
+        >
+          {enumVals.map((v, i) => (
+            <option key={v} value={i}>
+              {v.replace("_", " ")}
+            </option>
+          ))}
+        </select>
+      );
   }
-  return null;
 });
 
 export default SocketInput;
+
+const StringInput = forwardRef<
+  HTMLInputElement,
+  { onChange(value: string): void; className?: string; initialValue?: string }
+>(({ onChange, initialValue, className, ...props }, ref) => {
+  const [value, setValue] = useState(initialValue || "");
+
+  return (
+    <input
+      className={clsx(
+        "w-16 px-1 bg-black rounded-md border border-gray-400",
+        className
+      )}
+      onKeyDown={(e) => e.stopPropagation()}
+      onChange={(e) => setValue(e.target.value)}
+      value={value}
+      onBlur={(e) => onChange(e.target.value)}
+    />
+  );
+});
 
 const IntRegex = /^[0-9]*$/;
 const IntegerInput = forwardRef<
@@ -78,8 +113,6 @@ const IntegerInput = forwardRef<
       onChange={(e) => {
         if (!IntRegex.test(e.target.value)) return;
         setValue(e.target.value);
-        let num = parseInt(e.target.value);
-        if (!isNaN(num)) onChange(num);
       }}
       onBlur={(e) => {
         let num = parseInt(e.target.value);
@@ -109,9 +142,6 @@ const FloatInput = forwardRef<
       onChange={(e) => {
         if (!FloatRegex.test(e.target.value)) return;
         setValue(e.target.value);
-        if (e.target.value.split(".")[1] === "") return;
-        let num = parseFloat(e.target.value);
-        if (!isNaN(num)) onChange(num);
       }}
       onBlur={(e) => {
         if (e.target.value.includes(".")) {

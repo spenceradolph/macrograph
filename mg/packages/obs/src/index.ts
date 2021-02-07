@@ -13,8 +13,8 @@ export class SetCurrentScene extends ExecNode {
     return this.InputDataPins[0];
   }
 
-  Work() {
-    engine.emit("SetCurrentScene", { "scene-name": this.SceneInputPin.Data });
+  async Work() {
+    await engine.SetCurrentScene({ "scene-name": this.SceneInputPin.Data });
   }
 }
 

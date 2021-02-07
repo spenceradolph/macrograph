@@ -20,7 +20,7 @@ createNodeVariants(
         this.AddOutputDataPin("", type);
       }
 
-      Work() {
+      async Work() {
         this.OutputDataPins[0].Data =
           this.InputDataPins[0].Data - this.InputDataPins[1].Data;
       }
@@ -34,7 +34,7 @@ createNodeVariants(
         this.AddOutputDataPin("", type);
       }
 
-      Work() {
+      async Work() {
         this.OutputDataPins[0].Data =
           this.InputDataPins[0].Data + this.InputDataPins[1].Data;
       }
@@ -48,7 +48,7 @@ createNodeVariants(
         this.AddOutputDataPin("", type);
       }
 
-      Work() {
+      async Work() {
         this.OutputDataPins[0].Data =
           this.InputDataPins[0].Data * this.InputDataPins[1].Data;
       }
@@ -62,7 +62,7 @@ createNodeVariants(
         this.AddOutputDataPin("", type);
       }
 
-      Work() {
+      async Work() {
         const res = this.InputDataPins[0].Data * this.InputDataPins[1].Data;
         this.OutputDataPins[0].Data =
           type === types.int ? Math.trunc(res) : res;

@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES5",
-    "module": "commonjs",
+    "module": "ES6",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "outDir": "out",
@@ -12,6 +12,5 @@
     "rootDir": "src",
     "importHelpers": true
   },
-  "include": ["src"],
-  "exclude": ["src/electron"]
+  "include": ["src/electron"]
 }

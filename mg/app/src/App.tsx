@@ -14,12 +14,23 @@ import { SelectProperty, TextProperty } from "./store/EngineStore";
 async function init() {
   await ipcBus.invoke("app:uiReady");
 
+  await Promise.all([initPackages(), initEngines(), initEnums()]);
+}
+
+async function initPackages() {
   const pkgs: any[] = await ipcBus.invoke("packages:registered");
 
   pkgs.forEach((pkg: any) => Store.packages.registerPackage(pkg));
+}
 
+async function initEngines() {
   const res = await ipcBus.invoke("engines");
   res.forEach((engine: any) => Store.engines.registerEngine(engine));
+}
+
+async function initEnums() {
+  const res = await ipcBus.invoke("enums");
+  res.forEach((e: any) => Store.enums.registerEnum(e));
 }
 
 init();

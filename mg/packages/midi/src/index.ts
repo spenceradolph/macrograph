@@ -1,74 +1,14 @@
-import {
-  EventNode,
-  ExecNode,
-  Node,
-  types,
-  Property,
-  BaseEngine,
-  Select,
-  Engine as DeclareEngine,
-} from "macrograph";
-import { ipcMain, BrowserWindow } from "electron";
+import { EventNode, ExecNode, Node, types } from "macrograph";
+import { Engine, MIDIEventType } from "./engine";
 
-const win = new BrowserWindow({
-  show: false,
-  webPreferences: {
-    contextIsolation: true,
-    preload: `${__dirname}/electron/preload.js`,
-  },
-});
-
-win.webContents.openDevTools();
-
-win.loadURL(`file://${__dirname}/electron/index.html`);
-
-ipcMain.handle(`midi`, (_, { type, data }) => {
-  Engine.emit(type, data);
-});
-
-@DeclareEngine("midi")
-class _Engine extends BaseEngine {
-  @Property()
-  inputs!: Select;
-
-  @Property()
-  outputs!: Select;
-
-  async start() {
-    this.on("connected", ({ name, type }) => {
-      const arr = type === "input" ? this.inputs.options : this.outputs.options;
-
-      if (!arr.includes(name)) arr.push(name);
-    });
-
-    this.on("disconnected", ({ name, type }) => {
-      const arr = type === "input" ? this.inputs.options : this.outputs.options;
-
-      const index = arr.findIndex((o) => o === name);
-      if (index !== -1) arr.splice(index);
-    });
-
-    this.on("send-basic", ({ note, velocity, channel }) => {
-      win.webContents.send("send-basic", {
-        note,
-        velocity,
-        channel,
-        device: this.inputs.value,
-      });
-    });
-  }
-}
-
-export const Engine = new _Engine();
-
-@Node({ displayName: "MIDI Device Connected" })
+@Node({ displayName: "Device Connected" })
 class MIDIDeviceConnected extends EventNode {
   build() {
     super.build();
     this.AddOutputDataPin("Name", types.string);
     this.AddOutputDataPin("Is Input", types.boolean);
 
-    Engine.on("connected", (data) => this.Start(data));
+    Engine.on("connected", (d) => this.Start(d));
   }
 
   Fire({ name, type }: any) {
@@ -77,18 +17,84 @@ class MIDIDeviceConnected extends EventNode {
   }
 }
 
-@Node({ displayName: "Send Basic MIDI" })
-class MIDISendBasic extends ExecNode {
+@Node({ displayName: "Device Disconnected" })
+class MIDIDeviceDisconnected extends EventNode {
+  build() {
+    super.build();
+    this.AddOutputDataPin("Name", types.string);
+    this.AddOutputDataPin("Is Input", types.boolean);
+
+    Engine.on("disconnected", (d) => this.Start(d));
+  }
+
+  Fire({ name, type }: any) {
+    this.OutputDataPins[0].Data = name;
+    this.OutputDataPins[1].Data = type === "input";
+  }
+}
+
+@Node({ displayName: "Send MIDI" })
+class MIDISendStandard extends ExecNode {
   build() {
     super.build();
 
-    this.AddInputDataPin("Note", types.int);
-    this.AddInputDataPin("Velocity", types.int);
+    this.AddInputDataPin("Index", types.int);
+    this.AddInputDataPin("Value", types.int);
     this.AddInputDataPin("Channel", types.int);
+    this.AddInputDataPin("Type", types.enum(MIDIEventType));
   }
 
-  Work() {
-    const [note, velocity, channel] = this.InputDataPins.map((p) => p.Data);
-    Engine.emit("send-basic", { note, velocity, channel });
+  async Work() {
+    const [index, value, channel, type] = this.InputDataPins.map((p) => p.Data);
+    Engine.emit("send-basic", { index, value, channel, type });
+  }
+}
+
+@Node({ displayName: "Send Sysex" })
+class MIDISendSysex extends ExecNode {
+  build() {
+    super.build();
+
+    this.AddInputDataPin("Data", types.array(types.int));
+  }
+
+  async Work() {
+    const data = this.InputDataPins[0].Data;
+    Engine.emit("send-sysex", { data });
+  }
+}
+
+@Node({ displayName: "Note On Received" })
+class MIDINoteOn extends EventNode {
+  build() {
+    super.build();
+
+    this.AddOutputDataPin("Note", types.int);
+    this.AddOutputDataPin("Velocity", types.int);
+    this.AddOutputDataPin("Channel", types.int);
+
+    Engine.on("noteon", (d) => this.Start(d));
+  }
+
+  Fire({ note, velocity, channel }: any) {
+    this.OutputDataPins[0].Data = note;
+    this.OutputDataPins[1].Data = velocity;
+    this.OutputDataPins[2].Data = channel;
+  }
+}
+@Node({ displayName: "Note Off Received" })
+class MIDINoteOff extends EventNode {
+  build() {
+    super.build();
+
+    this.AddOutputDataPin("Note", types.int);
+    this.AddOutputDataPin("Channel", types.int);
+
+    Engine.on("noteoff", (d) => this.Start(d));
+  }
+
+  Fire({ note, channel }: any) {
+    this.OutputDataPins[0].Data = note;
+    this.OutputDataPins[1].Data = channel;
   }
 }

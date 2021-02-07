@@ -18,7 +18,7 @@ createNodeVariants(
         this.AddInputDataPin("Data", type);
       }
 
-      Work() {
+      async Work() {
         console.log(this.InputDataPins[0].Data.toString());
       }
     }

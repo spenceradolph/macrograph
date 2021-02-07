@@ -1,10 +1,12 @@
 import "reflect-metadata";
 import { EventEmitter2 } from "eventemitter2";
-import _NodesManager, { setCurrentManager } from "./NodesManager";
-import { EngineManager } from "./EngineManager";
+import _NodesManager, { setCurrentManager } from "./managers/NodesManager";
+import { EngineManager } from "./managers/EngineManager";
+import { EnumManager } from "./managers/EnumManager";
 import { Project } from "./Project";
 import IpcBus from "./services/EventService";
 import { BrowserWindow } from "electron";
+
 export * from "./nodes";
 export * from "./ipc";
 export * from "./decorators";
@@ -22,6 +24,7 @@ export class Core {
   ipcBus = new IpcBus();
   NodesManager = new _NodesManager(this.ipcBus);
   EngineManager = new EngineManager(this.ipcBus);
+  EnumManager = new EnumManager(this.ipcBus);
 
   Project: Project;
 

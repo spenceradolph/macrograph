@@ -1,7 +1,7 @@
-import { BaseEngine } from "./classes";
-import { SerializedEngine } from "./ipc";
-import { PropertyType } from "./properties";
-import IpcBus from "./services/EventService";
+import { BaseEngine } from "../classes";
+import { SerializedEngine } from "../ipc";
+import { PropertyType } from "../properties";
+import IpcBus from "../services/EventService";
 
 export interface PropertyData {
   name: string;
@@ -76,7 +76,6 @@ export class EngineManager {
   }
 
   startAll() {
-    console.log(this.engineInstances)
     return Promise.all(
       [...this.engineInstances.values()].map((i) => i.start())
     );

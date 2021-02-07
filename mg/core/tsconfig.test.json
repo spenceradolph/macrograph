@@ -6,8 +6,10 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "downlevelIteration": true,
+    "declaration": true,
     "strict": true,
-    "incremental": true
+    "inlineSourceMap": true,
+    "inlineSources": true
   },
-  "include": ["src"]
+  "include": ["src/test.ts"]
 }

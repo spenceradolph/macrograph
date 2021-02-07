@@ -54,7 +54,7 @@ export abstract class NodeDataPin extends NodePin {
           return;
         }
     }
-    console.error(`Value ${val} does not conform to type ${this.PinType.type}`);
+    console.log(`Value ${val} does not conform to type ${this.PinType.type}`);
   }
 
   constructor(Node: BaseNode, Name: string, PinType: PinType) {

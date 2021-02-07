@@ -1,5 +1,5 @@
 import { BrowserWindow, ipcMain } from "electron";
-import * as path from "path"
+import * as path from "path";
 
 import {
   core,
@@ -17,14 +17,14 @@ export const startup = (win: BrowserWindow) => {
   ipcMain.handle("IPC_RENDERER", async (_, { type, data }: any) => {
     const res = await ipcBus.emitAsync(type, data);
 
-    // console.log(`IPC_RENDERER ${type}`);
+    console.log(`IPC_RENDERER ${type}`);
 
     return res[0];
   });
 
   ipcBus.onMany({
     IPC_MAIN: ({ type, data }: any) => {
-      // console.log(`IPC_MAIN ${type}`);
+      console.log(`IPC_MAIN ${type}`);
       win.webContents.send("IPC_MAIN", { type, data });
     },
     "app:uiReady": async () => {
@@ -44,6 +44,9 @@ export const startup = (win: BrowserWindow) => {
       const [_, engineName] = (this.event as any).split(":") as string;
 
       return core.EngineManager.serializeEngine(engineName);
+    },
+    enums: function () {
+      return core.EnumManager.serializeEnums();
     },
     "packages:registered": () => {
       return NodesManager.AllNodes();
