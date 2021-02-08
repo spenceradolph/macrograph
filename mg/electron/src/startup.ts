@@ -32,6 +32,7 @@ export const startup = (win: BrowserWindow) => {
       require(path.join(__dirname, "../../packages/test"));
       require(path.join(__dirname, "../../packages/util"));
       require(path.join(__dirname, "../../packages/midi"));
+      require(path.join(__dirname, "../../packages/logic"))
 
       await core.EngineManager.startAll();
 
@@ -81,6 +82,18 @@ export const startup = (win: BrowserWindow) => {
     },
     "project:createNode": (args: any) => {
       return core.Project.CreateNode(args);
+    },
+    "project:deleteNode": (node: number) => {
+      const nodeInstance = core.Project.Nodes[node];
+      if (nodeInstance === undefined)
+        throw new Error(`Cannot find node with id ${node} to delete`);
+
+      nodeInstance.InputDataPins.forEach((p) => p.Disconnect());
+      nodeInstance.OutputDataPins.forEach((p) => p.Disconnect());
+      nodeInstance.InputExecPins.forEach((p) => p.Disconnect());
+      nodeInstance.OutputExecPins.forEach((p) => p.Disconnect());
+
+      delete core.Project.Nodes[node];
     },
     "project:disconnectPin": (args) => {
       const node = core.Project.Nodes[args.node];

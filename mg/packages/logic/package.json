@@ -1,6 +1,6 @@
 {
-  "name": "math",
-  "displayName": "Math",
+  "name": "logic",
+  "displayName": "Logic",
   "version": "0.1.0",
   "main": "out/index.js",
   "scripts": {

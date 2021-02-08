@@ -33,16 +33,31 @@ WebMidi.enable((err) => {
     if (!input) return;
 
     input.addListener("noteon", "all", ({ channel, rawVelocity, note }) => {
-      invokeIpc("noteon", { channel, velocity: rawVelocity, note: note.number });
+      invokeIpc("standard-received", {
+        channel,
+        value: rawVelocity,
+        index: note.number,
+        type: 0,
+      });
     });
     input.addListener("noteoff", "all", ({ channel, note }) => {
-      invokeIpc("noteoff", { channel, note: note.number });
+      invokeIpc("standard-received", {
+        channel,
+        index: note.number,
+        value: 0,
+        type: 1,
+      });
     });
     input.addListener(
       "controlchange",
       "all",
       ({ channel, value, controller }) => {
-        invokeIpc("cc", { channel, value, index: controller.number });
+        invokeIpc("standard-received", {
+          channel,
+          value,
+          index: controller.number,
+          type: 2,
+        });
       }
     );
   });

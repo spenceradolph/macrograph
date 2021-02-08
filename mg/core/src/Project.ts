@@ -14,10 +14,7 @@ import { CheckDataRecursion, CheckExecRecursion } from "./utils";
 export class Project {
   Nodes: Record<number, BaseNode> = {};
 
-  constructor(
-    public NodesManager: NodesManager,
-    public EventService: IpcBus
-  ) {}
+  constructor(public NodesManager: NodesManager, public EventService: IpcBus) {}
 
   private _NewID = 0;
   get NewID() {
@@ -129,12 +126,11 @@ export class Project {
     if (CheckExecRecursion(from, to)) throw new Error();
 
     from.Disconnect();
+    to.Disconnect();
 
     from.OutgoingPin = to;
     to.IncomingPin = from;
   }
-  
-  
 
   // AddNode(node: BaseNode) {
   //   this.ConnectPins();

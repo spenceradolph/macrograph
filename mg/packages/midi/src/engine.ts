@@ -55,6 +55,26 @@ class _Engine extends BaseEngine {
     this.outputs.onChange((o: string) => {
       win.webContents.send("set-output", o);
     });
+
+    this.on("standard-received", ({ type, ...data }) => {
+      let action: string;
+
+      switch (type) {
+        case 0:
+          action = "noteon";
+          break;
+        case 1:
+          action = "noteoff";
+          break;
+        case 2:
+          action = "cc";
+          break;
+        default:
+          return;
+      }
+
+      this.emit(action, data);
+    });
   }
 }
 

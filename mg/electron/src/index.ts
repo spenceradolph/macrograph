@@ -29,9 +29,6 @@ function createWindow() {
   installExtension(REACT_DEVELOPER_TOOLS)
     .then((name) => console.log(`Added Extension: ${name}`))
     .catch((err) => console.log("An error occurred: ", err));
-  // installExtension(REDUX_DEVTOOLS)
-  //   .then((name) => console.log(`Added Extension: ${name}`))
-  //   .catch((err) => console.log("An error occurred: ", err));
 
   if (isDev) win.webContents.openDevTools();
 

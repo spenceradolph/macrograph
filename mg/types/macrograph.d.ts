@@ -68,11 +68,15 @@ declare class NodeInputDataPin extends NodeDataPin {
 declare abstract class NodeExecPin extends NodePin {}
 
 declare class NodeOutputExecPin extends NodeExecPin {
+  OutgoingPin: NodeInputExecPin | null;
+
   Disconnect(): void;
   get HasConnection(): boolean;
 }
 
 declare class NodeInputExecPin extends NodeExecPin {
+  IncomingPin: NodeInputExecPin | null;
+
   Disconnect(): void;
   get HasConnection(): boolean;
 }
@@ -94,12 +98,14 @@ declare module "macrograph" {
     readonly OutputExecPins: NodeOutputExecPin[];
 
     AddInputDataPin(Name: string, Type: PinType): void;
-    AddInputExecPin(Name: string): void;
+    AddInputExecPin(Name?: string): void;
     AddOutputDataPin(Name: string, Type: PinType): void;
-    AddOutputExecPin(Name: string): void;
+    AddOutputExecPin(Name?: string): void;
 
     abstract build(): void;
     abstract Work(): void;
+
+    Process(): Promise<void>;
 
     constructor(ID: number, Position: XYCoords, Type: string);
   }

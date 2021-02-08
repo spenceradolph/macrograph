@@ -40,7 +40,7 @@ export class GraphStore {
 
   deleteNode = flow(function* (this: GraphStore, args: { node: number }) {
     try {
-      yield ipcBus.invoke("project:delteteNode", args.node);
+      yield ipcBus.invoke("project:deleteNode", args.node);
 
       const nodeInstance = this.nodes.get(args.node);
 

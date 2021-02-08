@@ -61,7 +61,10 @@ const SocketInput = observer(({ pin }: Props) => {
 
       return (
         <select
-          className="w-32 bg-black rounded-md py-0 px-1 pr-8"
+          className={clsx(
+            "w-32 bg-black rounded-md py-0 px-1 pr-8",
+            pin.connected ? "opacity-0 pointer-events-none" : undefined
+          )}
           value={pin.unconnectedData as number}
           onChange={(e) => pin.setUnconnectedData(parseInt(e.target.value))}
         >

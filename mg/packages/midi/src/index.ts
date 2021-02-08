@@ -33,7 +33,7 @@ class MIDIDeviceDisconnected extends EventNode {
   }
 }
 
-@Node({ displayName: "Send MIDI" })
+@Node({ displayName: "Send Standard MIDI" })
 class MIDISendStandard extends ExecNode {
   build() {
     super.build();
@@ -64,6 +64,27 @@ class MIDISendSysex extends ExecNode {
   }
 }
 
+@Node({ displayName: "Standard MIDI Received" })
+class MIDIReceiveStandard extends EventNode {
+  build() {
+    super.build();
+
+    this.AddOutputDataPin("Index", types.int);
+    this.AddOutputDataPin("Value", types.int);
+    this.AddOutputDataPin("Channel", types.int);
+    this.AddOutputDataPin("Type", types.enum(MIDIEventType));
+
+    Engine.on("standard-received", (data) => this.Start(data));
+  }
+
+  Fire({ index, value, channel, type }: any) {
+    this.OutputDataPins[0].Data = index;
+    this.OutputDataPins[1].Data = value;
+    this.OutputDataPins[2].Data = channel;
+    this.OutputDataPins[3].Data = type;
+  }
+}
+
 @Node({ displayName: "Note On Received" })
 class MIDINoteOn extends EventNode {
   build() {
@@ -76,9 +97,9 @@ class MIDINoteOn extends EventNode {
     Engine.on("noteon", (d) => this.Start(d));
   }
 
-  Fire({ note, velocity, channel }: any) {
-    this.OutputDataPins[0].Data = note;
-    this.OutputDataPins[1].Data = velocity;
+  Fire({ index, value, channel }: any) {
+    this.OutputDataPins[0].Data = index;
+    this.OutputDataPins[1].Data = value;
     this.OutputDataPins[2].Data = channel;
   }
 }
@@ -93,8 +114,8 @@ class MIDINoteOff extends EventNode {
     Engine.on("noteoff", (d) => this.Start(d));
   }
 
-  Fire({ note, channel }: any) {
-    this.OutputDataPins[0].Data = note;
+  Fire({ index, channel }: any) {
+    this.OutputDataPins[0].Data = index;
     this.OutputDataPins[1].Data = channel;
   }
 }

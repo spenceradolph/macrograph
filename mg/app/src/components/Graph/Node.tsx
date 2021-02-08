@@ -73,7 +73,7 @@ const Node = observer(({ node, selected, onMouseDown }: Props) => {
     >
       <div
         className={clsx(
-          "px-2 h-6 cursor-pointer text-left bg-red-700",
+          "px-2 h-6 cursor-pointer text-left",
           HEADER_COLOR[node.variant]
         )}
         onMouseDown={(e) => {
