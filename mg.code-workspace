@@ -1,26 +1,26 @@
 {
 	"folders": [
-        {
-            "name": "app",
-            "path": "mg\\app"
-        },
-        {
+		{
+			"name": "app",
+			"path": "mg\\app"
+		},
+		{
 			"name": "core",
 			"path": "mg\\core"
 		},
 		{
 			"name": "electron",
 			"path": "mg\\electron"
-        },
-        {
+		},
+		{
 			"name": "packages",
 			"path": "mg\\packages"
-        },
-        {
+		},
+		{
 			"name": "scripts",
 			"path": "mg\\scripts"
-        },
-        {
+		},
+		{
 			"name": "types",
 			"path": "mg\\types"
 		}
